@@ -1,0 +1,110 @@
+RRHHGrammer2024#
+
+1606
+0005618130
+
+30293
+0011834154
+
+30313
+0006453040
+
+rosa: #fee5e9
+
+var(--azul-claro);
+
+var(--lila);
+
+
+tengo la tabla que se llama Storage_Unit su con las columnas:
+Id_StorageUnit(int y PK), Numero_Parte(varchar),Cantidad(float), Storage_Bin(varchar), Storage_Type(varchar), Estatus(int), FolioMarbete(varchar),Conteo(int)
+
+tambien tengo la tabla InventarioSap is, con las columnas:
+STLocation(int y PK), STBin(varchar y PK), STType(varchar y PK), GrammerNo(varchar y PK), Cantidad(float), y  AreaCve(varchar)
+
+Considerando que su.Numero_Parte = is.GrammerNo, su.Storage_Bin = is.STBin, su.Storage_Type = is.STType, quiero agrupar los valores de Storage_Unit por el valor de las 
+llaves primarias de InventarioSap, tomar los valores de su.Cantidad y sumarlos, obtener el total y actualizar el valor de is.Cantidad, todo esto con php, 
+tomando en cuenta que la conexion a la BD se establece con: <?php
+include_once('connection.php'); , la conexion se establece asi:
+    $con = new LocalConector();
+    $conex = $con->conectar();
+
+    // Iniciar transacción
+    $conex->begin_transaction();
+
+la idea es:
+1. si existe $id_StorageUnit entonces siempre se llama a  insertarRegistrosStorage($id_StorageUnit, $GrammerNo, $Cantidad, $StBin, $StType);
+2. cuando no existe $id_StorageUnit se llama directamente a insertarRegistrosInventario($GrammerNo, $STLocation, $StBin, $StType, $Cantidad, $AreaCve)
+3. cauando existe $id_StorageUnit se deben agrupar los valores por: $GrammerNo,$StBin, $StType (que son las llaves primarias de Inventario), se suma la cantidad 
+y se llama a insertarRegistrosInventario($GrammerNo, $STLocation, $StBin, $StType, $Cantidad, $AreaCve)
+
+
+Para la tabla Bin, genera en insert para la columnas StBin(varchar 250) y StType(varchar 250) , considerando la siguiente estructura:
+<?php
+include_once('db/db_Inventario.php');
+
+$AreaCve=$_POST['AreaCve'];
+$AreaNombre=$_POST['AreaNombre'];
+$AreaProduccion=$_POST['AreaProduccion'];
+$StLocation=$_POST['StLocation'];
+$StBin=$_POST['StBin'];
+
+registroUsu($AreaCve,$AreaNombre,$AreaProduccion,$StLocation,$StBin);
+
+
+function registroUsu($AreaCve,$AreaNombre,$AreaProduccion,$StLocation,$StBin){
+    $con = new LocalConector();
+    $conex=$con->conectar();
+    $insertRegistro= "INSERT INTO user(AreaCve,AreaNombre,AreaProduccion,StLocation,StBin) VALUES ('$AreaCve','$AreaNombre','$AreaProduccion','$StLocation','$StBin');";
+    $rsinsertUsu=mysqli_query($conex,$insertRegistro);
+    mysqli_close($conex);
+
+    if(!$rsinsertUsu){
+        echo "0";
+    }
+    else{
+        echo "1";
+    }
+
+}
+?>
+
+
+lo mismo para la tabla Bitacora_Inventario con las columnas: Id_Bitacora(int), NumeroParte(varchar),FolioMarbete(varchar), Fecha(datetime), Usuario(varchar),
+UsuarioVerificacion(varchar),Estatus(int),PrimerConteo(float),SegundoConteo(float),TercerConteo(float),SegFolio(varchar),
+UserSeg(varchar), Comentario(varchar), StorageBin(varchar), StorageType(varchar), Area(varchar)
+
+
+lo mismo para la tabla InventarioSap con las columnas: STLocation(int), STBin(varchar),STType(varchar),GrammerNo(varchar),Cantidad(float),AreaCve(varchar)
+
+
+lo mismo para la tabla Marbete_Inventario
+Id_Marbete (int), Numero_Parte(varchar), Estatus(int), StorageBin(varchar), Fecha(datetime), Area(int)
+
+lo mismo para la tabla Parte
+columnas: 
+GrammerNo Primary	varchar(250),Descripcion	varchar(250),UM	varchar(250),ProfitCtr	varchar(250),
+Costo	float, Por	int(11)
+
+
+lo mismo para la tabla Storage_Unit columnas:
+Id_StorageUnit Primary	int(11), Numero_Parte	varchar(250), Cantidad	float, Storage_Bin	varchar(250)	,
+Storage_Type	varchar(250), Estatus	int(11), FolioMarbete	varchar(250),Conteo	int(11)
+
+lo mismo para la tabla Ubicaciones columnas:
+GrammerNo Primary	varchar(250), PVB	varchar(250)
+
+
+lo mismo  tabla Usuarios:
+Id_Usuario  int(11),Nomina	int(11),Nombre	varchar(250),User	varchar(250),
+Password	varchar(250),Rol	int(11), Estatus	int(11), Area	int(11)
+
+query para crear tabla que se llame Inventory
+con las columnas:
+noWarehouse(varchar 250), inventoryRec(int), inventoryItem(int), quant(int), inventoryPage(int), storageType(varchar 250),
+storageBin (varchar 250), binPos(int), noMaterial(varchar 250), plant(int), batch(int), storageUnit(int), 
+counted(int), baseUnit(varchar 250), totalStorage(int)
+
+
+
+Jose-phr   GrammerP5
